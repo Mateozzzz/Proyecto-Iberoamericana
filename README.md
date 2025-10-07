@@ -1,4 +1,5 @@
 📦 Plataforma de Disponibilidad y Reservas para Asesores
+
 🧠 Descripción General
 
 Este proyecto académico tiene como objetivo el diseño y desarrollo de una plataforma de gestión de disponibilidad y reservas para asesores comerciales, aplicando principios de ingeniería de software, metodologías ágiles y arquitectura moderna. El sistema busca optimizar la consulta de inventarios, la reserva de productos en tiempo real y la generación de reportes de gestión, garantizando seguridad, escalabilidad y disponibilidad en la nube.
