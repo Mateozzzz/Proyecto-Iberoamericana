@@ -4,6 +4,7 @@
 
 Este proyecto académico tiene como objetivo el diseño y desarrollo de una plataforma de gestión de disponibilidad y reservas para asesores comerciales, aplicando principios de ingeniería de software, metodologías ágiles y arquitectura moderna. El sistema busca optimizar la consulta de inventarios, la reserva de productos en tiempo real y la generación de reportes de gestión, garantizando seguridad, escalabilidad y disponibilidad en la nube.
 
+
 🚀 Objetivos del Proyecto
 
 Desarrollar un sistema funcional, escalable y seguro para la gestión de reservas de productos.
@@ -15,6 +16,7 @@ Aplicar metodologías ágiles (Scrum y Kanban) para el seguimiento del desarroll
 Integrar un enfoque de gestión de riesgos siguiendo las guías del PMBOK.
 
 Desarrollar documentación técnica y funcional completa: requerimientos, diagramas UML, y análisis de riesgos.
+
 
 ⚙️ Funcionalidades Principales
 
@@ -51,6 +53,7 @@ Pipeline de CI/CD para pruebas, despliegue y monitoreo continuo.
 
 Contenedores Docker y orquestación Kubernetes.
 
+
 🧪 Metodología de Desarrollo
 
 Metodología Ágil (Scrum/Kanban): gestión iterativa de tareas y entregas.
@@ -60,6 +63,7 @@ DevOps: automatización de integración, pruebas y despliegue.
 Testing continuo: pruebas unitarias, de carga y monitoreo con herramientas CI/CD.
 
 Gestión de riesgos: identificación, evaluación y mitigación de riesgos según PMBOK.
+
 
 📘 Documentación del Proyecto
 
@@ -75,19 +79,21 @@ Gestión de Riesgos en Proyectos de Software (PMBOK Framework).
 
 Manual de Licitaciones BID: estructura profesional y entregables técnicos.
 
+
 📊 Herramientas y Tecnologías
 
-Lenguajes: Java, JavaScript, SQL.
+Lenguajes:JavaScript, SQL.
 
-Frameworks: Spring Boot, React/Next.js.
+Frameworks: React/Next.js.
 
-Bases de Datos: MySQL, MongoDB.
+Bases de Datos: MySQL.
 
 DevOps: Docker, Jenkins, Kubernetes, GitHub Actions.
 
 Documentación: Lucidchart, Markdown, Word, Excel.
 
 Control de versiones: Git y GitHub.
+
 
 🧱 Estructura del Repositorio
 
@@ -99,11 +105,8 @@ Control de versiones: Git y GitHub.
 
 ├── tests/                # Casos de prueba
 
-├── requirements/         # Requisitos funcionales y no funcionales
-
-├── reports/              # Reportes de avance y conclusiones
-
 └── README.md             # Este archivo
+
 
 🧩 Equipo y Roles
 
