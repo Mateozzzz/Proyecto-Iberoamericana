@@ -2,7 +2,7 @@
 
 🧠 Descripción General
 
-Este proyecto académico tiene como objetivo el diseño y desarrollo de una plataforma de gestión de disponibilidad y reservas para asesores comerciales, aplicando principios de ingeniería de software, metodologías ágiles y arquitectura moderna. El sistema busca optimizar la consulta de inventarios, la reserva de productos en tiempo real y la generación de reportes de gestión, garantizando seguridad, escalabilidad y disponibilidad en la nube.
+Este proyecto académico tiene como objetivo el diseño y desarrollo de una plataforma de gestión de disponibilidad y reservas para asesores comerciales, mostranddo Dashboards interactivos, aplicando principios de ingeniería de software, metodologías ágiles y arquitectura moderna. El sistema busca optimizar la consulta de inventarios, la reserva de productos en tiempo real y la generación de reportes de gestión, garantizando seguridad, escalabilidad y disponibilidad en la nube.
 
 
 🚀 Objetivos del Proyecto
@@ -86,9 +86,9 @@ Lenguajes:JavaScript, SQL.
 
 Frameworks: React/Next.js.
 
-Bases de Datos: MySQL.
+Bases de Datos: MySQL, PostgreSQL.
 
-DevOps: Docker, Jenkins, Kubernetes, GitHub Actions.
+DevOps: Docker, Jenkins, Azure, GitHub Actions.
 
 Documentación: Lucidchart, Markdown, Word, Excel.
 
