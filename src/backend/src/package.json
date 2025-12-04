@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "dev": "node server.js",
+    "test": "jest --runInBand"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+}
+

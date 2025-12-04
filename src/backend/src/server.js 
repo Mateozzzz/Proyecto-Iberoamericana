@@ -1,0 +1,23 @@
+// server.js
+
+const express = require('express');
+const { connectDB } = require('./src/config/db.config');
+const reservationRoutes = require('./src/routes/reservation.routes');
+
+const app = express();
+app.use(express.json());
+
+app.use('/api', reservationRoutes);
+
+async function start() {
+  await connectDB(process.env.MONGO_URI || 'mongodb://localhost:27017/tu_db');
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
+  });
+}
+
+start();
+
+module.exports = app; // exportamos para tests
+
