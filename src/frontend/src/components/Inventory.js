@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-
+const IMAGE_BASE_URL = '/assets';
 /**
  * Inventory component displays a catalog of products available for reservation. A
  * button allows the user to reserve a product which triggers a POST call
@@ -11,16 +11,16 @@ function Inventory() {
   const products = [
     {
       id: 'P001',
-      name: 'Advanced Grout - Gray',
+      name: ' Protector Stonprotec® Ecoston Plus ',
       price: 115960,
-      description: 'Premium grout for tile and stone applications, stain‑resistant and easy to apply.',
+      description: 'Tratamiento hidro-oleo repelente base agua, formulado para reducir la absorción y proteger piedras naturales.',
       stock: 42,
     },
     {
       id: 'P002',
-      name: 'Advanced Grout - White',
-      price: 115960,
-      description: 'Premium grout for tile and stone applications, stain‑resistant and easy to apply.',
+      name: ' Limpiador Ácido – Stonprotec® ',
+      price: 41960,
+      description: 'Limpiador especializado para final de obra.',
       stock: 48,
     },
     {
@@ -113,33 +113,128 @@ function Inventory() {
     }
   };
 
-  return (
-    <div style={{ padding: '1rem' }}>
-      <h2>Inventario</h2>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+// --- Estilos para un look Minimalista (Catálogo) ---
+  const styles = {
+    container: {
+      padding: '2rem',
+      backgroundColor: '#f9f9f9',
+      fontFamily: 'Arial, sans-serif',
+    },
+    header: {
+      fontSize: '2rem',
+      fontWeight: '300',
+      marginBottom: '1.5rem',
+      color: '#333',
+    },
+    grid: {
+      display: 'grid',
+      // Diseño de rejilla responsiva para 3-4 columnas
+      gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+      gap: '20px',
+    },
+    card: {
+      backgroundColor: 'white',
+      borderRadius: '8px',
+      padding: '1.5rem',
+      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)',
+      display: 'flex',
+      flexDirection: 'column',
+      transition: 'transform 0.2s, box-shadow 0.2s',
+      // Estilo al pasar el ratón (simulado con pseudo-clase)
+      ':hover': {
+        transform: 'translateY(-5px)',
+        boxShadow: '0 10px 15px rgba(0, 0, 0, 0.1)',
+      },
+    },
+    image: {
+      width: '100%',
+      height: '180px', // Un poco más alta que 150px
+      objectFit: 'cover',
+      borderRadius: '4px',
+      marginBottom: '1rem',
+      border: '1px solid #eee',
+    },
+    productName: {
+      fontSize: '1.1rem',
+      fontWeight: '600',
+      color: '#333',
+      margin: '0 0 0.5rem 0',
+      minHeight: '44px', // Ayuda a alinear las descripciones si los títulos varían
+    },
+    description: {
+      fontSize: '0.9rem',
+      color: '#666',
+      marginBottom: '1rem',
+      flexGrow: 1, // Permite que la descripción empuje el contenido inferior
+    },
+    price: {
+      fontSize: '1.4rem',
+      fontWeight: '700',
+      color: '#4a90e2', // Color de acento
+      margin: '0 0 0.5rem 0',
+    },
+    stock: (inStock) => ({
+      fontSize: '0.9rem',
+      fontWeight: '500',
+      marginBottom: '1rem',
+      color: inStock > 20 ? '#2ecc71' : inStock > 0 ? '#f39c12' : '#e74c3c', // Semáforo de stock
+    }),
+    button: {
+      padding: '0.75rem',
+      width: '100%',
+      backgroundColor: '#4a90e2',
+      color: 'white',
+      border: 'none',
+      borderRadius: '4px',
+      fontWeight: 'bold',
+      cursor: 'pointer',
+      transition: 'background-color 0.2s',
+      // Estilo al pasar el ratón (simulado)
+      ':hover': {
+        backgroundColor: '#357abd',
+      },
+    },
+  };
+
+  // Función para manejar el hover (React no soporta pseudo-clases en `style` directamente)
+  // Tendrías que usar un estado o una librería CSS-in-JS real, pero para esta demostración, 
+  // mantendremos el estilo en línea lo más limpio posible y simularemos el hover solo en el comentario.  
+
+return (
+    <div style={styles.container}>
+      <h2 style={styles.header}>Inventario</h2>
+      
+      <div style={styles.grid}>
         {products.map((product) => (
-          <div
-            key={product.id}
-            style={{
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-              padding: '1rem',
-              flex: '1 0 21%',
-              boxSizing: 'border-box',
-            }}
-          >
-            {/* Placeholder image */}
+          // Aplicamos el estilo de la tarjeta directamente.
+          <div key={product.id} style={styles.card}> 
+            
+            {/* Imagen Placeholder */}
             <img
-              src={`https://via.placeholder.com/150?text=${encodeURIComponent(product.name)}`}
+              src={`${IMAGE_BASE_URL}/${encodeURIComponent(product.name)}.jpg`}
               alt={product.name}
-              style={{ width: '100%', height: '150px', objectFit: 'cover', marginBottom: '0.5rem' }}
+              style={styles.image}
             />
-            <h4>{product.name}</h4>
-            <p style={{ fontSize: '0.9rem', minHeight: '40px' }}>{product.description}</p>
-            <p style={{ fontWeight: 'bold' }}>$ {product.price.toLocaleString('es-CO')}</p>
-            <p>Stock: {product.stock} unidades</p>
-            <button onClick={() => reserveProduct(product)} style={{ padding: '0.5rem', width: '100%' }}>
-              Reservar Ahora
+            
+            <h4 style={styles.productName}>{product.name}</h4>
+            
+            <p style={styles.description}>{product.description}</p>
+            
+            <p style={styles.price}>
+              $ {product.price.toLocaleString('es-CO')}
+            </p>
+            
+            {/* Uso de la función de stock para el color condicional */}
+            <p style={styles.stock(product.stock)}>
+              Stock: {product.stock} unidades
+            </p>
+            
+            <button 
+              onClick={() => reserveProduct(product)} 
+              style={styles.button}
+              disabled={product.stock === 0} // Deshabilitar si no hay stock
+            >
+              {product.stock > 0 ? 'Reservar Ahora' : 'Agotado'}
             </button>
           </div>
         ))}

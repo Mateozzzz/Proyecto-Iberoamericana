@@ -27,66 +27,193 @@ function Dashboard() {
     { name: 'Chía', percent: 9, sales: 1040 },
   ];
 
+  // --- Estilos para un look Minimalista ---
+  // Idealmente, esto estaría en un archivo CSS separado o se usaría Tailwind/Emotion/Styled Components.
+  const styles = {
+    container: {
+      padding: '2rem',
+      maxWidth: '1200px',
+      margin: '0 auto',
+      fontFamily: 'Arial, sans-serif',
+      backgroundColor: '#f9f9f9', // Fondo sutil
+    },
+    header: {
+      fontSize: '2rem',
+      fontWeight: '300', // Fuente más ligera para minimalismo
+      marginBottom: '1.5rem',
+      color: '#333',
+    },
+    kpiContainer: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: '1.5rem',
+      marginBottom: '2rem',
+    },
+    kpiCard: {
+      flex: '1',
+      minWidth: '220px',
+      backgroundColor: 'white',
+      borderRadius: '8px',
+      padding: '1.5rem',
+      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)', // Sombra sutil
+      borderLeft: '4px solid #4a90e2', // Borde de acento
+    },
+    kpiTitle: {
+      fontSize: '1rem',
+      color: '#666',
+      margin: '0 0 0.5rem 0',
+      fontWeight: '400',
+    },
+    kpiValue: {
+      fontSize: '2rem',
+      fontWeight: '600',
+      color: '#333',
+      margin: '0 0 0.25rem 0',
+    },
+    kpiChangePositive: {
+      color: '#2ecc71', // Verde minimalista
+      fontSize: '0.9rem',
+    },
+    chartsContainer: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: '1.5rem',
+      marginBottom: '2rem',
+    },
+    chartCard: {
+      flex: '1',
+      minWidth: '300px',
+      backgroundColor: 'white',
+      borderRadius: '8px',
+      padding: '1.5rem',
+      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+    },
+    cardTitle: {
+      fontSize: '1.2rem',
+      fontWeight: '500',
+      color: '#333',
+      borderBottom: '1px solid #eee',
+      paddingBottom: '0.75rem',
+      marginBottom: '1rem',
+    },
+    barItem: {
+      marginBottom: '1rem',
+    },
+    barText: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      marginBottom: '0.25rem',
+      fontSize: '0.9rem',
+      color: '#444',
+    },
+    barBackground: {
+      background: '#eef2f6', // Gris muy claro
+      height: '8px',
+      borderRadius: '4px',
+      overflow: 'hidden',
+    },
+    barFill: {
+      height: '100%',
+      background: '#4a90e2', // Color de acento
+      borderRadius: '4px',
+    },
+    list: {
+      listStyle: 'none',
+      padding: 0,
+      margin: 0,
+    },
+    listItem: {
+      marginBottom: '0.75rem',
+      padding: '0.5rem 0',
+      borderBottom: '1px solid #f0f0f0',
+      color: '#555',
+      fontSize: '0.95rem',
+    },
+  };
+
   return (
-    <div style={{ padding: '1rem' }}>
-      <h2>Dashboard</h2>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+    <div style={styles.container}>
+      <h2 style={styles.header}>Dashboard</h2>
+
+      {/* Tarjetas KPI */}
+      <div style={styles.kpiContainer}>
         {/* Total Sales */}
-        <div style={{ flex: '1', minWidth: '250px', border: '1px solid #ccc', borderRadius: '4px', padding: '1rem' }}>
-          <h3>Ventas Totales</h3>
-          <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
+        <div style={styles.kpiCard}>
+          <h3 style={styles.kpiTitle}>Ventas Totales</h3>
+          <p style={styles.kpiValue}>
             $ {totalSales.toLocaleString('es-CO')}
           </p>
-          <p style={{ color: 'green' }}>+1.9%</p>
+          <p style={styles.kpiChangePositive}>+1.9%</p>
         </div>
         {/* Products in stock */}
-        <div style={{ flex: '1', minWidth: '250px', border: '1px solid #ccc', borderRadius: '4px', padding: '1rem' }}>
-          <h3>Productos en Stock</h3>
-          <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{stockCount}</p>
-          <p style={{ color: 'green' }}>+12 nuevos</p>
+        <div style={styles.kpiCard}>
+          <h3 style={styles.kpiTitle}>Productos en Stock</h3>
+          <p style={styles.kpiValue}>{stockCount}</p>
+          <p style={styles.kpiChangePositive}>+12 nuevos</p>
         </div>
+        {/* Añadir más KPIs aquí si es necesario para llenar el espacio */}
       </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginTop: '1rem' }}>
-          {/* Top Products bar chart placeholder */}
-          <div style={{ flex: '1', minWidth: '300px', border: '1px solid #ccc', borderRadius: '4px', padding: '1rem' }}>
-            <h4>Productos Más Vendidos</h4>
-            {topProducts.map((item) => (
-              <div key={item.name} style={{ marginBottom: '0.5rem' }}>
+
+      {/* Gráficos y Listas */}
+      <div style={styles.chartsContainer}>
+        {/* Top Products bar chart placeholder */}
+        <div style={styles.chartCard}>
+          <h4 style={styles.cardTitle}>Productos Más Vendidos</h4>
+          {topProducts.map((item) => (
+            <div key={item.name} style={styles.barItem}>
+              <div style={styles.barText}>
                 <span>{item.name}</span>
-                <div style={{ background: '#e7e7e7', height: '10px', borderRadius: '3px' }}>
+                <span>{item.quantity}</span>
+              </div>
+              <div style={styles.barBackground}>
+                <div
+                  style={{
+                    ...styles.barFill,
+                    width: `${(item.quantity / topProducts[0].quantity) * 100}%`,
+                  }}
+                ></div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Category breakdown pie chart placeholder */}
+        <div style={styles.chartCard}>
+          <h4 style={styles.cardTitle}>Desglose de Mercado por Categoría</h4>
+          <ul style={styles.list}>
+            {categories.map((cat) => (
+              <li key={cat.name} style={styles.listItem}>
+                <span>
+                  **{cat.name}**: **{cat.percent}%**
+                </span>
+                <div style={styles.barBackground}>
                   <div
                     style={{
-                      width: `${(item.quantity / topProducts[0].quantity) * 100}%`,
-                      height: '100%',
-                      background: '#4a90e2',
-                      borderRadius: '3px',
+                      ...styles.barFill,
+                      width: `${cat.percent}%`,
+                      // Cambiar color para diferenciar si es necesario
+                      backgroundColor: cat.percent > 30 ? '#4a90e2' : '#7ed321', 
                     }}
                   ></div>
                 </div>
-              </div>
+              </li>
             ))}
-          </div>
-          {/* Category breakdown pie chart placeholder */}
-          <div style={{ flex: '1', minWidth: '300px', border: '1px solid #ccc', borderRadius: '4px', padding: '1rem' }}>
-            <h4>Desglose de Mercado por Categoría</h4>
-            <ul style={{ listStyle: 'none', padding: 0 }}>
-              {categories.map((cat) => (
-                <li key={cat.name} style={{ marginBottom: '0.5rem' }}>
-                  <span>
-                    {cat.name}: {cat.percent}%
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          </ul>
+        </div>
       </div>
-      {/* Regional breakdown */}
-      <div style={{ marginTop: '1rem', border: '1px solid #ccc', borderRadius: '4px', padding: '1rem' }}>
-        <h4>Bogotá Regional Sales</h4>
-        <ul style={{ listStyle: 'none', padding: 0 }}>
+
+      {/* Regional breakdown - Ahora como otra Tarjeta */}
+      <div style={styles.chartCard}>
+        <h4 style={styles.cardTitle}>Bogotá Regional Sales</h4>
+        <ul style={styles.list}>
           {regions.map((reg) => (
-            <li key={reg.name} style={{ marginBottom: '0.5rem' }}>
-              <strong>{reg.name}</strong> - {reg.percent}% (ventas: {reg.sales.toLocaleString('es-CO')})
+            <li key={reg.name} style={styles.listItem}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <strong>{reg.name}</strong>
+                <span>
+                  {reg.percent}% ({reg.sales.toLocaleString('es-CO')})
+                </span>
+              </div>
             </li>
           ))}
         </ul>

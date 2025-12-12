@@ -7,10 +7,7 @@ const { Schema, model } = require('mongoose');
  */
 const reservationSchema = new Schema(
   {
-    user: {
-      type: String,
-      required: true,
-    },
+    user: {type: String,required: true,},
     productName: {
       type: String,
       required: true,
@@ -29,8 +26,8 @@ const reservationSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ['Pendiente', 'Confirmada', 'Completada', 'Cancelada'],
-      default: 'Pendiente',
+      enum: ['Activa','Cancelada'],
+      default: 'Activa',
     },
   },
   {

@@ -1,121 +1,78 @@
-📦 Plataforma de Disponibilidad y Reservas para Asesores
+# Sistema de Reservas para Asesores Comerciales
 
-🧠 Descripción General
+Este proyecto consiste en una aplicación **full‑stack** para la gestión de reservas de productos por parte de asesores comerciales. La interfaz sigue la estética de las pantallas proporcionadas y se construye con **React** en el frontend y **Node.js/Express** en el backend. Los datos se almacenan en una base de datos **MongoDB**. 
 
-Este proyecto académico tiene como objetivo el diseño y desarrollo de una plataforma de gestión de disponibilidad y reservas para asesores comerciales, mostranddo Dashboards interactivos, aplicando principios de ingeniería de software, metodologías ágiles y arquitectura moderna. El sistema busca optimizar la consulta de inventarios, la reserva de productos en tiempo real y la generación de reportes de gestión, garantizando seguridad, escalabilidad y disponibilidad en la nube.
+## Arquitectura
 
+El proyecto está dividido en dos carpetas principales:
 
-🚀 Objetivos del Proyecto
+- **`backend/`**: Implementa una API REST con Express. Utiliza una arquitectura por capas con carpetas para **configuración**, **modelos**, **servicios**, **controladores** y **rutas**. La conexión a MongoDB se gestiona con Mongoose y se delegan las operaciones a un servicio que encapsula la lógica de negocio. El archivo `src/app.js` expone la aplicación Express y arranca el servidor cuando se ejecuta como proceso principal.
+- **`frontend/`**: Contiene una aplicación React sencilla creada con `react-scripts`. Se utilizan componentes funcionales para las distintas vistas: inicio de sesión, dashboard, inventario y listado de reservas. El enrutado se gestiona con `react-router-dom` y las llamadas al backend se realizan con Axios.  
 
-Desarrollar un sistema funcional, escalable y seguro para la gestión de reservas de productos.
+La organización en capas facilita el mantenimiento y las pruebas; cada capa se encarga de una responsabilidad concreta:
 
-Implementar una arquitectura basada en buenas prácticas DevOps, con integración continua (CI/CD) y despliegue automatizado.
+1. **Modelos (`models/`)**: Definen la estructura de los documentos en MongoDB (por ejemplo `Reservation`).
+2. **Servicios (`services/`)**: Encapsulan la lógica de negocio y las operaciones sobre los modelos.
+3. **Controladores (`controllers/`)**: Gestionan las peticiones HTTP, validan los datos y delegan en los servicios.
+4. **Rutas (`routes/`)**: Definen los endpoints y asocian cada uno a su controlador.
 
-Aplicar metodologías ágiles (Scrum y Kanban) para el seguimiento del desarrollo.
+Además se incluyen pruebas automatizadas de **unidad**, **integración** y de **componente** utilizando **Jest** y **Supertest** en el backend y **React Testing Library** en el frontend.
 
-Integrar un enfoque de gestión de riesgos siguiendo las guías del PMBOK.
+## Puesta en marcha local
 
-Desarrollar documentación técnica y funcional completa: requerimientos, diagramas UML, y análisis de riesgos.
+Para ejecutar la aplicación en tu entorno local necesitas Node.js ≥ 16 y MongoDB. Configura la variable de entorno `MONGODB_URI` con la cadena de conexión a tu base de datos. Cada paquete tiene su propio `package.json` así que debes instalar las dependencias de forma independiente:
 
+```bash
+cd backend
+npm install
 
-⚙️ Funcionalidades Principales
+# Arrancar API (asume puerto 4000 por defecto)
+npm start
 
-Requisitos Funcionales:
+cd ../frontend
+npm install
 
-RF1: Autenticación de asesores.
+# Levantar frontend de desarrollo en http://localhost:3000
+npm start
+```
 
-RF2: Consulta de inventario en tiempo real.
+Con ambos servidores en marcha, podrás navegar por las vistas de la aplicación. El inventario contiene productos de ejemplo y al hacer una reserva se enviará una petición POST al backend, que la guardará en la base de datos.
 
-RF3: Reserva de productos con bloqueo para otros asesores.
+## Despliegue en Vercel
 
-RF4: Generación de reportes de inventario y reservas.
+Para desplegar en **Vercel** puedes utilizar un único repositorio con dos directorios. Vercel detectará automáticamente un proyecto de Node.js en `backend` y de React en `frontend` si configuras los `vercel.json` o las opciones de despliegue en la interfaz. Una estrategia común es:
 
-Requisitos No Funcionales:
+1. Crear un repositorio con este contenido y subirlo a GitHub.
+2. En Vercel, importar el repositorio y configurar dos proyectos:
+   - **Backend**: en las opciones de construcción indica como directorio `backend`, comando de build `npm install` y comando de salida `npm start`. Define la variable de entorno `MONGODB_URI` en Vercel con la cadena de conexión a MongoDB Atlas u otro proveedor.
+   - **Frontend**: en las opciones de construcción selecciona el directorio `frontend`, el comando de construcción `npm run build` y directorio de salida `build`. Define la variable `REACT_APP_API_URL` con la URL de tu API backend desplegada.
+3. Tras la primera publicación, el frontend consumirá la API del backend desplegado y la aplicación quedará disponible.
 
-RNF1: Disponibilidad 24/7 en la nube.
+Consulta la documentación oficial de Vercel para ajustar estos pasos a tu flujo de trabajo.
 
-RNF2: Tiempo de respuesta menor a 2 segundos.
+## Ejecución de pruebas
 
-RNF3: Cifrado de credenciales y sesiones.
+Para ejecutar las pruebas del backend:
 
-RNF4: Escalabilidad horizontal y modularidad.
+```bash
+cd backend
+npm test
+```
 
-🧩 Arquitectura del Sistema
+Esto ejecutará las pruebas unitarias de los controladores y las pruebas de integración de las rutas con Supertest.
 
-La solución está diseñada bajo una arquitectura de microservicios, soportada por principios de DevOps y Continuous Delivery.
-Incluye:
+Para las pruebas del frontend:
 
-API REST para comunicación entre módulos.
+```bash
+cd frontend
+npm test
+```
 
-Base de datos en la nube (NoSQL/SQL híbrido).
+Se lanzarán los tests definidos para los componentes React.
 
-Pipeline de CI/CD para pruebas, despliegue y monitoreo continuo.
+## Uso
 
-Contenedores Docker y orquestación Kubernetes.
-
-
-🧪 Metodología de Desarrollo
-
-Metodología Ágil (Scrum/Kanban): gestión iterativa de tareas y entregas.
-
-DevOps: automatización de integración, pruebas y despliegue.
-
-Testing continuo: pruebas unitarias, de carga y monitoreo con herramientas CI/CD.
-
-Gestión de riesgos: identificación, evaluación y mitigación de riesgos según PMBOK.
-
-
-📘 Documentación del Proyecto
-
-La documentación integra las guías metodológicas y técnicas de:
-
-Guía para la Elaboración de Proyectos (IVAC - País Vasco): fases de diseño, planificación, ejecución y evaluación.
-
-Guía Your Guide to Modern DevOps (Microsoft): prácticas de colaboración, integración y entrega continua.
-
-Evaluación de Métodos de Desarrollo (Microservicios, SOA, EDA).
-
-Gestión de Riesgos en Proyectos de Software (PMBOK Framework).
-
-Manual de Licitaciones BID: estructura profesional y entregables técnicos.
-
-
-📊 Herramientas y Tecnologías
-
-Lenguajes:JavaScript, SQL.
-
-Frameworks: React/Next.js.
-
-Bases de Datos: MySQL, PostgreSQL.
-
-DevOps: Docker, Jenkins, Azure, GitHub Actions.
-
-Documentación: Lucidchart, Markdown, Word, Excel.
-
-Control de versiones: Git y GitHub.
-
-
-🧱 Estructura del Repositorio
-
-├── docs/                 # Documentación técnica y académica
-
-├── src/                  # Código fuente del proyecto
-
-├── diagrams/             # Diagramas UML (clases, componentes, despliegue)
-
-├── tests/                # Casos de prueba
-
-└── README.md             # Este archivo
-
-
-🧩 Equipo y Roles
-
-Líder del Proyecto: Mateo Henao Correa
-
-Rol Académico: Proyecto de Software – Corporación Universitaria Iberoamericana
-
-Asesor Docente: Tatiana Cabrera.
-
-🏁 Conclusión
-
-Este proyecto representa la integración de conocimientos teóricos y prácticos en ingeniería de software, aplicando un enfoque moderno y colaborativo basado en DevOps, metodologías ágiles y gestión integral de riesgos. La propuesta demuestra cómo los principios de calidad, automatización y arquitectura distribuida permiten crear soluciones reales y escalables para las necesidades de empresas y asesores comerciales.
+1. **Inicio de sesión**: La vista de login permite introducir correo y contraseña, aunque en este ejemplo no hay autenticación real; se redirige directamente al dashboard.
+2. **Dashboard**: Muestra métricas generales de ventas, productos en stock y desglose por categoría y región. Se utiliza información estática para simular los gráficos de ejemplo.
+3. **Inventario**: Presenta una lista de productos con su precio, descripción y stock. Al pulsar **Reservar Ahora** se envía una solicitud al backend para crear una reserva.
+4. **Reservas**: Lista las reservas existentes recuperadas del backend. Permite visualizar los detalles (en un `alert`) y eliminar una reserva.
