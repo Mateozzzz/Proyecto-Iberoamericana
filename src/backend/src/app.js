@@ -14,14 +14,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Health check endpoint (Línea 17)
+// Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
 // API routes
 app.use('/api/reservations', reservationRoutes);
-
-// Eliminamos el bloque "if (require.main === module)..." porque ya está en server.js
 
 module.exports = app;
