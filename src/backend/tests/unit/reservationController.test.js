@@ -1,115 +1,166 @@
-const ReservationController = require('../../src/controllers/reservationController');
+const reservationController = require('../../src/controllers/reservationController');
+const reservationService = require('../../src/services/reservationService');
+const httpMocks = require('node-mocks-http');
 
-describe('ReservationController', () => {
-  let mockService;
-  let controller;
+// Mockeamos el servicio para aislar el controlador
+jest.mock('../../src/services/reservationService');
 
-  beforeEach(() => {
-    // Create a mock service object
-    mockService = {
-      createReservation: jest.fn(),
-      getAllReservations: jest.fn(),
-      getReservationById: jest.fn(),
-      updateReservation: jest.fn(),
-      deleteReservation: jest.fn(),
-    };
-    // Inject the mock into controller
-    controller = new ReservationController(mockService);
-  });
+describe('Reservation Controller - Unit Tests', () => {
+    let req, res, next;
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  describe('create', () => {
-    it('should return 201 and created reservation', async () => {
-      const req = { body: { user: 'test', productName: 'Item', description: 'Desc', price: 100, quantity: 1 } };
-      const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
-      const mockReservation = { id: '1', ...req.body };
-      
-      mockService.createReservation.mockResolvedValue(mockReservation);
-      
-      await controller.create(req, res);
-      
-      expect(res.status).toHaveBeenCalledWith(201);
-      expect(res.json).toHaveBeenCalledWith(mockReservation);
+    // Configuración inicial antes de cada test
+    beforeEach(() => {
+        req = httpMocks.createRequest();
+        res = httpMocks.createResponse();
+        next = jest.fn();
+        jest.clearAllMocks(); // Limpia los mocks anteriores
     });
 
-    it('should return 400 on error', async () => {
-      const req = { body: {} };
-      const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
-      mockService.createReservation.mockRejectedValue(new Error('Invalid'));
-      await controller.create(req, res);
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ message: expect.any(String) }));
-    });
-  });
+    // --- TEST: CREATE (Crear) ---
+    describe('create', () => {
+        it('Debe crear una reserva exitosamente (201)', async () => {
+            const mockData = { item: 'Laptop', user: 'Juan' };
+            req.body = mockData;
+            reservationService.createReservation.mockResolvedValue(mockData);
 
-  describe('list', () => {
-    it('should return reservations list', async () => {
-      const req = {};
-      const res = { json: jest.fn() };
-      const data = [{ id: '1' }, { id: '2' }];
-      mockService.getAllReservations.mockResolvedValue(data);
-      await controller.list(req, res);
-      expect(res.json).toHaveBeenCalledWith(data);
-    });
-  });
+            await reservationController.create(req, res);
 
-  describe('getById', () => {
-    it('should return a reservation', async () => {
-      const req = { params: { id: '1' } };
-      const res = { json: jest.fn(), status: jest.fn().mockReturnThis() };
-      const reservation = { id: '1' };
-      mockService.getReservationById.mockResolvedValue(reservation);
-      await controller.getById(req, res);
-      expect(res.json).toHaveBeenCalledWith(reservation);
+            expect(res.statusCode).toBe(201);
+            expect(res._getJSONData()).toEqual(mockData);
+        });
+
+        it('Debe retornar 400 si ocurre un error al crear', async () => {
+            reservationService.createReservation.mockRejectedValue(new Error('Datos inválidos'));
+
+            await reservationController.create(req, res);
+
+            expect(res.statusCode).toBe(400);
+            expect(res._getJSONData()).toHaveProperty('message', 'Error creating reservation');
+        });
     });
 
-    it('should return 404 when not found', async () => {
-      const req = { params: { id: '1' } };
-      const res = { json: jest.fn(), status: jest.fn().mockReturnThis() };
-      mockService.getReservationById.mockResolvedValue(null);
-      await controller.getById(req, res);
-      expect(res.status).toHaveBeenCalledWith(404);
-    });
-  });
+    // --- TEST: LIST (Listar todas) ---
+    describe('list', () => {
+        it('Debe listar todas las reservas (200)', async () => {
+            const mockList = [{ item: 'Proyector' }, { item: 'Laptop' }];
+            reservationService.getAllReservations.mockResolvedValue(mockList);
 
-  describe('update', () => {
-    it('should update reservation', async () => {
-      const req = { params: { id: '1' }, body: { status: 'Confirmada' } };
-      const res = { json: jest.fn(), status: jest.fn().mockReturnThis() };
-      const updated = { id: '1', status: 'Confirmada' };
-      mockService.updateReservation.mockResolvedValue(updated);
-      await controller.update(req, res);
-      expect(res.json).toHaveBeenCalledWith(updated);
-    });
+            await reservationController.list(req, res);
 
-    it('should return 404 when update fails', async () => {
-      const req = { params: { id: '1' }, body: {} };
-      const res = { json: jest.fn(), status: jest.fn().mockReturnThis() };
-      mockService.updateReservation.mockResolvedValue(null);
-      await controller.update(req, res);
-      expect(res.status).toHaveBeenCalledWith(404);
-    });
-  });
+            expect(res.statusCode).toBe(200);
+            expect(res._getJSONData()).toEqual(mockList);
+        });
 
-  describe('delete', () => {
-    it('should delete reservation', async () => {
-      const req = { params: { id: '1' } };
-      const res = { status: jest.fn().mockReturnThis(), send: jest.fn() };
-      mockService.deleteReservation.mockResolvedValue({ id: '1' });
-      await controller.delete(req, res);
-      expect(res.status).toHaveBeenCalledWith(204);
-      expect(res.send).toHaveBeenCalled();
+        it('Debe retornar 500 si falla el servicio', async () => {
+            reservationService.getAllReservations.mockRejectedValue(new Error('Error DB'));
+
+            await reservationController.list(req, res);
+
+            expect(res.statusCode).toBe(500);
+            expect(res._getJSONData()).toHaveProperty('message', 'Error fetching reservations');
+        });
     });
 
-    it('should return 404 when deletion fails', async () => {
-      const req = { params: { id: '1' } };
-      const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
-      mockService.deleteReservation.mockResolvedValue(null);
-      await controller.delete(req, res);
-      expect(res.status).toHaveBeenCalledWith(404);
+    // --- TEST: GET BY ID (Obtener por ID) ---
+    describe('getById', () => {
+        it('Debe retornar una reserva si existe (200)', async () => {
+            req.params.id = '123';
+            const mockItem = { id: '123', item: 'Tablet' };
+            reservationService.getReservationById.mockResolvedValue(mockItem);
+
+            await reservationController.getById(req, res);
+
+            expect(res.statusCode).toBe(200);
+            expect(res._getJSONData()).toEqual(mockItem);
+        });
+
+        it('Debe retornar 404 si la reserva no existe', async () => {
+            req.params.id = '999';
+            reservationService.getReservationById.mockResolvedValue(null);
+
+            await reservationController.getById(req, res);
+
+            expect(res.statusCode).toBe(404);
+            expect(res._getJSONData()).toHaveProperty('message', 'Reservation not found');
+        });
+
+        it('Debe retornar 500 si hay error interno', async () => {
+            req.params.id = 'error_id';
+            reservationService.getReservationById.mockRejectedValue(new Error('Fallo conexión'));
+
+            await reservationController.getById(req, res);
+
+            expect(res.statusCode).toBe(500);
+            expect(res._getJSONData()).toHaveProperty('message', 'Error fetching reservation');
+        });
     });
-  });
+
+    // --- TEST: UPDATE (Actualizar) ---
+    describe('update', () => {
+        it('Debe actualizar una reserva existente (200)', async () => {
+            req.params.id = '123';
+            req.body = { status: 'Finalizada' };
+            const updatedItem = { id: '123', status: 'Finalizada' };
+            reservationService.updateReservation.mockResolvedValue(updatedItem);
+
+            await reservationController.update(req, res);
+
+            expect(res.statusCode).toBe(200);
+            expect(res._getJSONData()).toEqual(updatedItem);
+        });
+
+        it('Debe retornar 404 si intenta actualizar algo inexistente', async () => {
+            req.params.id = '999';
+            reservationService.updateReservation.mockResolvedValue(null);
+
+            await reservationController.update(req, res);
+
+            expect(res.statusCode).toBe(404);
+            expect(res._getJSONData()).toHaveProperty('message', 'Reservation not found');
+        });
+
+        it('Debe retornar 400 si hay un error en la actualización', async () => {
+            req.params.id = '123';
+            reservationService.updateReservation.mockRejectedValue(new Error('Validación fallida'));
+
+            await reservationController.update(req, res);
+
+            expect(res.statusCode).toBe(400); // Según tu código devuelve 400 en catch
+            expect(res._getJSONData()).toHaveProperty('message', 'Error updating reservation');
+        });
+    });
+
+    // --- TEST: DELETE (Eliminar) ---
+    describe('delete', () => {
+        it('Debe eliminar una reserva existente (204)', async () => {
+            req.params.id = '123';
+            const deletedItem = { id: '123', item: 'Borrar' };
+            reservationService.deleteReservation.mockResolvedValue(deletedItem);
+
+            await reservationController.delete(req, res);
+
+            expect(res.statusCode).toBe(204);
+            expect(res._isEndCalled()).toBeTruthy(); // Verifica que se llamó .send()
+        });
+
+        it('Debe retornar 404 si intenta eliminar algo inexistente', async () => {
+            req.params.id = '999';
+            reservationService.deleteReservation.mockResolvedValue(null);
+
+            await reservationController.delete(req, res);
+
+            expect(res.statusCode).toBe(404);
+            expect(res._getJSONData()).toHaveProperty('message', 'Reservation not found');
+        });
+
+        it('Debe retornar 500 si falla la eliminación', async () => {
+            req.params.id = 'error_id';
+            reservationService.deleteReservation.mockRejectedValue(new Error('Error grave'));
+
+            await reservationController.delete(req, res);
+
+            expect(res.statusCode).toBe(500);
+            expect(res._getJSONData()).toHaveProperty('message', 'Error deleting reservation');
+        });
+    });
 });

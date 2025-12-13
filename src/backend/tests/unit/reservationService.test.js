@@ -1,9 +1,13 @@
-const ReservationService = require('../../src/services/reservationService');
+const reservationService = require('../../src/services/reservationService');
+const ReservationModel = require('../../src/models/reservationModel');
 
-// Datos de prueba falsos basados en tu esquema
+// Interceptamos la llamada al modelo real.
+jest.mock('../../src/models/reservationModel');
+
 const mockData = {
+  _id: '12345',
   user: 'UsuarioTest',
-  productName: 'Laptop',
+  item: 'Laptop',
   description: 'Reparacion',
   price: 100,
   quantity: 1,
@@ -11,45 +15,86 @@ const mockData = {
 };
 
 describe('ReservationService Unit Tests', () => {
-  let service;
-  let mockModel;
 
   beforeEach(() => {
-    // --- MOCK (Simulación) DE MONGOOSE ---
-    // Creamos un objeto que finge ser el modelo de Mongoose
-    mockModel = {
-      // Simulamos métodos estáticos (find, findById, etc.)
-      find: jest.fn(() => ({ sort: jest.fn().mockResolvedValue([mockData]) })),
-      findById: jest.fn().mockResolvedValue(mockData),
-      findByIdAndUpdate: jest.fn().mockResolvedValue(mockData),
-      findByIdAndDelete: jest.fn().mockResolvedValue(mockData),
-    };
-
-    // Simulamos el constructor del modelo (new Model(data)) y el método .save()
-    // Esto es un truco necesario porque tu servicio usa "new this.ReservationModel()"
-    const mockModelConstructor = jest.fn((data) => ({
-      ...data,
-      save: jest.fn().mockResolvedValue(data) // save devuelve los mismos datos
-    }));
-
-    // Copiamos los métodos estáticos al constructor simulado
-    Object.assign(mockModelConstructor, mockModel);
-
-    // INYECTAMOS el modelo falso al servicio
-    service = new ReservationService(mockModelConstructor);
+    jest.clearAllMocks(); // Limpiar mocks antes de cada test
   });
 
+  // --- Pruebas Existentes ---
+
   test('createReservation debería guardar y retornar la reserva', async () => {
-    const result = await service.createReservation(mockData);
+    const mockSave = jest.fn().mockResolvedValue(mockData);
+    ReservationModel.mockImplementation(() => ({
+      save: mockSave
+    }));
+
+    const result = await reservationService.createReservation(mockData);
     
+    expect(ReservationModel).toHaveBeenCalledWith(mockData);
+    expect(mockSave).toHaveBeenCalled();
     expect(result).toEqual(mockData);
-    expect(result.productName).toBe('Laptop');
   });
 
   test('getAllReservations debería retornar lista ordenada', async () => {
-    const result = await service.getAllReservations();
+    const mockSort = jest.fn().mockResolvedValue([mockData]);
+    const mockFind = jest.fn().mockReturnValue({
+      sort: mockSort
+    });
+    ReservationModel.find = mockFind;
+
+    const result = await reservationService.getAllReservations();
     
-    expect(mockModel.find).toHaveBeenCalled(); // Verifica que se llamó a la DB
+    expect(ReservationModel.find).toHaveBeenCalled();
+    expect(mockSort).toHaveBeenCalledWith({ createdAt: -1 });
     expect(result).toEqual([mockData]);
+  });
+
+  // --- NUEVAS PRUEBAS PARA SUBIR LA COBERTURA (Líneas 32-51) ---
+
+  test('getReservationById debería retornar una reserva por ID', async () => {
+    // Simulamos que findById devuelve los datos mock
+    ReservationModel.findById = jest.fn().mockResolvedValue(mockData);
+
+    const result = await reservationService.getReservationById('12345');
+
+    expect(ReservationModel.findById).toHaveBeenCalledWith('12345');
+    expect(result).toEqual(mockData);
+  });
+
+  test('getReservationById debería retornar null si no existe', async () => {
+    // Simulamos que no encuentra nada
+    ReservationModel.findById = jest.fn().mockResolvedValue(null);
+
+    const result = await reservationService.getReservationById('id_falso');
+
+    expect(ReservationModel.findById).toHaveBeenCalledWith('id_falso');
+    expect(result).toBeNull();
+  });
+
+  test('updateReservation debería actualizar y retornar la nueva reserva', async () => {
+    const updateData = { status: 'Completada' };
+    const updatedMock = { ...mockData, ...updateData };
+
+    // Simulamos findByIdAndUpdate. 
+    // Es crucial devolver el objeto actualizado porque tu servicio usa { new: true }
+    ReservationModel.findByIdAndUpdate = jest.fn().mockResolvedValue(updatedMock);
+
+    const result = await reservationService.updateReservation('12345', updateData);
+
+    expect(ReservationModel.findByIdAndUpdate).toHaveBeenCalledWith(
+      '12345', 
+      updateData, 
+      { new: true } // Verificamos que se pase la opción correcta
+    );
+    expect(result).toEqual(updatedMock);
+  });
+
+  test('deleteReservation debería eliminar y retornar la reserva eliminada', async () => {
+    ReservationModel.findByIdAndDelete = jest.fn().mockResolvedValue(mockData);
+
+    const result = await reservationService.deleteReservation('12345');
+
+    expect(ReservationModel.findByIdAndDelete).toHaveBeenCalledWith('12345');
+    expect(result).toEqual(mockData);
   });
 });
