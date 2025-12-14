@@ -11,7 +11,7 @@ router.get('/', reservationController.list);
 
 // 3. Rutas con ID
 router.get('/:id', reservationController.getById);
-router.put('/:id', reservationController.update); // <--- ¡AGREGA ESTA LÍNEA!
+router.put('/:id', reservationController.update);
 router.delete('/:id', reservationController.delete);
 
 module.exports = router;
